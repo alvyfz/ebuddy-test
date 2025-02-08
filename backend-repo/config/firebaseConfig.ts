@@ -1,14 +1,17 @@
-
-import { initializeApp, cert } from "firebase-admin/app";
-import { getFirestore } from "firebase-admin/firestore";
-import serviceAccount from "./serviceAccountKey.json"; // File JSON dari Firebase Console
+import * as admin from 'firebase-admin'
+const serviceAccount = require('./config.firebase-admin')
 
 // Inisialisasi Firebase Admin SDK
-initializeApp({
-    credential: cert(serviceAccount),
-});
+
+const app = admin.initializeApp(
+  {
+    credential: admin.credential.cert(serviceAccount)
+    // databaseURL: process.env.FIREBASE_DATABASE_URL
+  },
+  'admin'
+)
 
 // Inisialisasi Firestore
-const db = getFirestore();
+const db = app.firestore()
 
-export { db };
+export { db, app }

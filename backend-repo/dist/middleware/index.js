@@ -8,26 +8,35 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.middleware = void 0;
-const middleware = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+exports.authMiddleware = void 0;
+const firebaseConfig_1 = require("@/config/firebaseConfig");
+const AuthenticationError_1 = __importDefault(require("commons/exceptions/AuthenticationError"));
+const firebase_admin_1 = require("firebase-admin");
+const authMiddleware = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    const idToken = (_a = req.headers.authorization) === null || _a === void 0 ? void 0 : _a.split('Bearer ')[1];
     try {
-        // access token value FB
-        // const authHeader = req.headers.authorization || "";
-        // const idToken = authHeader.startsWith("Bearer ")
-        //     ? authHeader.substring(7, authHeader.length)
-        //     : null;
-        // if (!idToken) throw new Error("Unauthorized");
-        // const decodedToken = await adminAuth.auth().verifyIdToken(idToken);
-        // res.locals.decodedToken = decodedToken;
-        return next();
+        if (!idToken) {
+            throw new AuthenticationError_1.default('Unauthorized: No token provided');
+        }
+        const decodedToken = yield (0, firebase_admin_1.auth)(firebaseConfig_1.app).verifyIdToken(idToken);
+        if (!decodedToken) {
+            throw new AuthenticationError_1.default('Unauthorized: Invalid token');
+        }
+        res.locals.user = decodedToken;
+        next();
     }
     catch (error) {
-        return res.status(500).json({
-            status: false,
-            message: "service unavailable",
-            dev: error.message,
-        });
+        if (error.code === 'auth/id-token-expired') {
+            next(new AuthenticationError_1.default('Unauthorized: Token has expired'));
+        }
+        else {
+            next(new AuthenticationError_1.default('Unauthorized: Invalid token'));
+        }
     }
 });
-exports.middleware = middleware;
+exports.authMiddleware = authMiddleware;

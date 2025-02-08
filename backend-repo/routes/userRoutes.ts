@@ -1,11 +1,13 @@
-const express = require('express');
-import { middleware } from '../middleware';
-const router = express.Router();
+import express from 'express'
+import { authMiddleware } from '../middleware'
+import { fetchUser, updateUser } from '../controller/userController'
 
+const router = express.Router()
 
-router.get('/', middleware, (req: any, res: any) => {
-    res.send('Test user');
-});
+// Endpoint untuk mengambil data user
+router.get('/fetch-user-data', authMiddleware, fetchUser)
 
+// Endpoint untuk mengupdate data user
+router.put('/update-user-data/:userId', authMiddleware, updateUser)
 
-module.exports = router;
+export default router

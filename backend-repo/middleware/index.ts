@@ -1,30 +1,34 @@
+import { app } from '@/config/firebaseConfig'
+import AuthenticationError from 'commons/exceptions/AuthenticationError'
+import { Request, Response, NextFunction } from 'express'
+import { auth } from 'firebase-admin'
 
+export const authMiddleware = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  const idToken = req.headers.authorization?.split('Bearer ')[1]
 
-
-const middleware = async (req: any, res: any, next: any) => {
-    try {
-        // access token value FB
-        // const authHeader = req.headers.authorization || "";
-
-        // const idToken = authHeader.startsWith("Bearer ")
-        //     ? authHeader.substring(7, authHeader.length)
-        //     : null;
-
-        // if (!idToken) throw new Error("Unauthorized");
-
-        // const decodedToken = await adminAuth.auth().verifyIdToken(idToken);
-
-        // res.locals.decodedToken = decodedToken;
-        return next();
-    } catch (error: any) {
-        return res.status(500).json({
-            status: false,
-            message: "service unavailable",
-            dev: error.message,
-        });
+  try {
+    if (!idToken) {
+      throw new AuthenticationError('Unauthorized: No token provided')
     }
-};
 
-export {
-    middleware
+    const decodedToken = await auth(app).verifyIdToken(idToken)
+
+    if (!decodedToken) {
+      throw new AuthenticationError('Unauthorized: Invalid token')
+    }
+
+    res.locals.user = decodedToken
+
+    next()
+  } catch (error: any) {
+    if (error.code === 'auth/id-token-expired') {
+      next(new AuthenticationError('Unauthorized: Token has expired'))
+    } else {
+      next(new AuthenticationError('Unauthorized: Invalid token'))
+    }
+  }
 }

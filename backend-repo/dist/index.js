@@ -1,4 +1,10 @@
 'use strict';
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const resHandler_1 = require("commons/exceptions/resHandler");
+const userRoutes_1 = __importDefault(require("routes/userRoutes"));
 var __importDefault = (this && this.__importDefault) ||
     function (mod) {
         return mod && mod.__esModule ? mod : { default: mod };
@@ -6,15 +12,17 @@ var __importDefault = (this && this.__importDefault) ||
 Object.defineProperty(exports, '__esModule', { value: true });
 const express_1 = __importDefault(require('express'));
 const dotenv_1 = __importDefault(require('dotenv'));
-const usersRouter = require('./routes/userRoutes');
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const port = process.env.PORT;
 const corsOptions = {
     credentials: true,
-    origin: true,
+    origin: true
 };
-app.use("/users", usersRouter);
+app.use('/users', userRoutes_1.default);
+app.use(function (error, req, res, next) {
+    return (0, resHandler_1.resErrorHandler)(res, error);
+});
 app.listen(port, () => {
     console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
 });
