@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #ffffff;
+  --foreground: #000957;
+  --font-text: var(--font-body);
+  --font-heading: var(--font-heading);
+  --font-monospace: 'Courier New', Courier, monospace;
+  --font-subheading: var(--font-heading);
+  ---color-text: #212121;
+  ---color-heading: #000000;
+  --color-background: #ffffff;
+}
+
+
+
+::-moz-selection {
+  /* Code for Firefox */
+  color: white;
+  background: #000957;
+}
+
+::selection {
+  color: white;
+  background: #000957;
+}
