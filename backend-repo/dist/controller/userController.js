@@ -16,6 +16,7 @@ exports.updateUser = exports.fetchUser = void 0;
 const userCollection_1 = require("../repository/userCollection");
 const NotFoundError_1 = __importDefault(require("commons/exceptions/NotFoundError"));
 const resHandler_1 = require("commons/exceptions/resHandler");
+const firebase_admin_1 = __importDefault(require("firebase-admin"));
 // Endpoint untuk mengambil data user
 const fetchUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { page, size } = req.query;
@@ -37,7 +38,7 @@ const updateUser = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
     const userId = req.params.userId;
     const userData = req.body;
     try {
-        yield (0, userCollection_1.updateUserData)(userId, userData);
+        yield (0, userCollection_1.updateUserData)(userId, Object.assign(Object.assign({}, userData), { recentlyActive: firebase_admin_1.default.firestore.Timestamp.fromDate(new Date(userData.recentlyActive)) }));
         (0, resHandler_1.resSuccessHandler)(res, 'User data updated successfully');
     }
     catch (error) {

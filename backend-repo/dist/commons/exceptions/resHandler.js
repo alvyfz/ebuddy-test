@@ -16,7 +16,7 @@ const resErrorHandler = (res, error) => {
     }
     if (error instanceof ClientError_1.default) {
         const response = {
-            success: false,
+            isSuccess: false,
             message: error.message,
             error: error.errors
         };
@@ -29,7 +29,7 @@ const resErrorHandler = (res, error) => {
     console.log(error);
     console.log(error.message);
     const response = {
-        success: false,
+        isSuccess: false,
         message: 'Sorry, something went wrong on the server',
         dev: error
     };
@@ -38,7 +38,7 @@ const resErrorHandler = (res, error) => {
 exports.resErrorHandler = resErrorHandler;
 const resSuccessHandler = (res, message, payload, code = 200) => {
     const response = {
-        success: true,
+        isSuccess: true,
         payload,
         message
     };

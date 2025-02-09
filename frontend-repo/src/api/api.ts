@@ -1,6 +1,7 @@
-import { METHOD } from "@/networks/uri";
+import { METHOD } from "@/api/uri";
 import Axios from "axios";
 import Cookies from "js-cookie";
+import nextConfig from "../../next.config";
 
 const request = async (
   method: string,
@@ -50,8 +51,9 @@ const requestResource = async (
   data?: { params?: any; headers?: any },
   timeout?: number
 ) => {
-  const url = `${path}${method === "GET" && data?.params ? `?${new URLSearchParams(data.params)}` : ""
-    }`;
+  const url = `${path}${
+    method === "GET" && data?.params ? `?${new URLSearchParams(data.params)}` : ""
+  }`;
   try {
     const res = await request(method, url, data, timeout);
     if (res.status === 200) {
@@ -75,13 +77,13 @@ const requestResource = async (
 };
 
 const post = async (path: string, data?: { params?: any; headers?: any }, timeout?: number) =>
-  requestResource(METHOD.POST, path, data, timeout);
+  requestResource(METHOD.POST, nextConfig.env?.BASE_API_URL + path, data, timeout);
 
 const put = async (path: string, data?: { params?: any; headers?: any }, timeout?: number) =>
-  requestResource(METHOD.PUT, path, data, timeout);
+  requestResource(METHOD.PUT, nextConfig.env?.BASE_API_URL + path, data, timeout);
 
 const get = async (path: string, data?: { params?: any; headers?: any }, timeout?: number) =>
-  requestResource(METHOD.GET, path, data, timeout);
+  requestResource(METHOD.GET, nextConfig.env?.BASE_API_URL + path, data, timeout);
 
 export const requestAPI = {
   post,

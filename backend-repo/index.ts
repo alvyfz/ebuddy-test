@@ -3,6 +3,9 @@
 import { resErrorHandler } from 'commons/exceptions/resHandler'
 import { NextFunction, Response } from 'express'
 import usersRouter from 'routes/userRoutes'
+const cors = require('cors')
+const bodyParser = require('body-parser')
+
 var __importDefault: any =
   (this && (this as any).__importDefault) ||
   function (mod: any) {
@@ -14,12 +17,18 @@ const dotenv_1 = __importDefault(require('dotenv'))
 
 dotenv_1.default.config()
 const app = (0, express_1.default)()
-const port = process.env.PORT
+const port = process.env.PORT_BACKEND || 3001
 
 const corsOptions = {
   credentials: true,
   origin: true
 }
+
+app.use(bodyParser.urlencoded({ extended: false }))
+
+app.use(bodyParser.json())
+
+app.use(cors(corsOptions))
 
 app.use('/users', usersRouter)
 

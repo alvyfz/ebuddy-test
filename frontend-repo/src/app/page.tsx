@@ -1,7 +1,8 @@
-import ShinyText from "@/components/ShinyText";
+import ShinyText from "@/components/Typography/ShinyText";
 import { LangType, translate } from "@/lang/lang";
 import { getCookies } from "next-client-cookies/server";
 import Link from "next/link";
+import Button from "@mui/material/Button";
 
 export default async function Home() {
   const cookies = await getCookies();
@@ -17,7 +18,7 @@ export default async function Home() {
           text="Welcome to EBUDDY TEST by Alvy"
         />
         <Link href="/dashboard">
-          <button>Go Dashboard</button>
+          <Button variant="contained">Go Dashboard</Button>
         </Link>
       </main>
     </div>
